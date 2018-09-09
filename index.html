@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="todolistarray-style\bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="todolistarray-style\todolistarray.css">
+    
+    <title>Array-Check</title>
+</head>
+<body>
+    <div class="bg">
+        <div class="d-flex justify-content-start">
+            <div class="d-flex w-n flex-column">
+                <div class="p-2 bd-highlight align-items-center">
+                    <h1 class="text-light lead display-4">Just Fill it !</h1>
+                </div>
+                <div class="p-2 bd-highlight align-items-start">
+                        <div class="input-group mb-3">
+                            <input id="inputan" type="text" class="form-control" placeholder="Apa yang akan kamu lakukan" aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary" type="button" id="button-simpan">Save</button>
+                                <!-- <button class="btn btn-outline-primary" type="button" id="button-clear">Bersihkan LocalStorage</button> -->
+                            </div>
+                        </div>
+                </div>
+                <div class="container">
+                    <ul id="list" class="list-group list-group-flush">
+                    
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let strArray
+        const inputanDOM = document.getElementById("inputan");
+        const buttonSimpanDOM = document.getElementById("button-simpan");
+        const listDOM = document.getElementById("list");
+        
+        strArray = localStorage.getItem("myList");
+        // todos = JSON.parse(strArray);
+        if (strArray === null) {
+            listDOM.innerHTML = "";
+            todos = [];
+        }else{
+            render(strArray);
+        }
+        
+        function render(arraystring){
+            let indeks = 0;
+            let preString; 
+            let midString; 
+            let postString;
+            let allstring;
+
+            listDOM.innerHTML ="";
+            todos = JSON.parse(arraystring);
+            while (indeks < todos.length) {
+                preString = '<li class="list-group-item text-light">'+
+                                    '<div class="d-flex bd-highlight">'+
+                                        '<div class="p-2 bd-highlight">'+
+                                            '<div class="form-check">'
+                if(todos[indeks].status == true){
+                    midString = '<input checked onchange="checkList(' + indeks +')" class="form-check-input" type="checkbox" value="">'+
+                                                '<label class="form-check-label" >'+
+                                                '</label>'+
+                                                '</div>'+
+                                        '</div>'+
+                                    '<div class="p-2 w-100 bd-highlight"><strike>' + todos[indeks].nama + '</strike></div>'+
+                                    '<div class="p-2 bd-highlight">'
+                }else{
+                    midString = '<input onchange="checkList(' + indeks +')" class="form-check-input" type="checkbox" value="">'+
+                                                '<label class="form-check-label" >'+
+                                                '</label>'+
+                                                '</div>'+
+                                        '</div>'+
+                                    '<div class="p-2 w-100 bd-highlight">' + todos[indeks].nama + '</div>'+
+                                    '<div class="p-2 bd-highlight">'
+                }
+                                                
+                postString =  '<button type="button" class="btn btn-outline-danger btn-sm" onClick=hapus(' + indeks +')>Delete</button>'+
+                                    '</div>'+
+                                    '</div>'+
+                                '</li>';
+                
+                alstring = preString+midString+postString
+                listDOM.innerHTML += alstring;
+                // listDOM.innerHTML += '<li class="d-flex list-group-item text-light display-5 justify-content-between align-items-center">' + todos[indeks] + '<button type="button" class="btn btn-danger btn-sm" onClick=hapus(' + indeks +')>Hapus</button></li>';
+                indeks++;
+            }
+        }
+        
+        function hapus(indeks){
+            todos.splice(indeks,1);
+            localStorage.setItem("myList",JSON.stringify(todos));
+            render(localStorage.getItem("myList"));
+        }
+
+        // strArray = localStorage.getItem("myList");
+        // // todos = JSON.parse(strArray);
+        // if (strArray === null) {
+        //     listDOM.innerHTML = "";
+        //     todos = [];
+        // }else{
+        //     render(strArray);
+        // }
+
+        buttonSimpanDOM.addEventListener("click", function(){
+            let input;
+
+            if(inputanDOM.value == ""){
+                return;
+            }
+            input  = { nama :inputanDOM.value,
+                                status:false};
+
+            todos.push(input);
+            localStorage.setItem("myList",JSON.stringify(todos));
+            
+            render(localStorage.getItem("myList"));
+            inputanDOM.value = "";
+            inputanDOM.focus();
+        })
+
+        function checkList(indeks){
+            if(todos[indeks].status == false){
+                todos[indeks].status = true;
+            }else{
+                todos[indeks].status = false;
+            }
+            localStorage.setItem("myList",JSON.stringify(todos));
+            render(localStorage.getItem("myList"));
+        }
+    </script>
+</body>
+</html>
